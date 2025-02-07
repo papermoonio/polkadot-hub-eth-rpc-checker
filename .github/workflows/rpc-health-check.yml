@@ -2,7 +2,8 @@ name: RPC Health Check
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily
+    # - cron: '0 0 * * *'  # Runs daily
+    - cron: '* * * * *'  # TEST: run every min
   workflow_dispatch:  # Allows manual trigger
 
 
