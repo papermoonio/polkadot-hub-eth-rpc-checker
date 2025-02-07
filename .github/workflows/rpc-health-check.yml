@@ -3,6 +3,8 @@ name: RPC Health Check
 on:
   schedule:
     - cron: '0 0 * * 0'  # Runs every Sunday at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
+
 
 jobs:
   check-rpc-health:
