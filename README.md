@@ -42,5 +42,5 @@ npm test
 ### GitHub Actions
 
 The workflow is configured to run the tests weekly (every Sunday at midnight) and manually through the GitHub Actions UI:
-- **Schedule**: The action runs weekly using a cron expression (`0 0 * * 0`).
+- **Schedule**: The action runs daily using a cron expression (`0 0 * * *`).
 - **Manual Trigger**: You can trigger the action manually by navigating to the GitHub Actions tab and selecting "Run workflow."
