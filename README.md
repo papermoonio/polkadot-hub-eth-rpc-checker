@@ -1,4 +1,4 @@
-# RPC Health Check
+# Polkadot Hub ETH Health Check
 
 This project contains a set of tests to check the health of Asset Hub Ethereum RPC endpoints using `npm` and `jest`. The tests verify various Ethereum JSON-RPC methods to ensure they return valid and expected responses. 
 
