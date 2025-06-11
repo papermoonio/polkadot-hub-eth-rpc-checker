@@ -1,8 +1,10 @@
 # Polkadot Hub ETH Health Check
 
-This project contains a set of tests to check the health of Asset Hub Ethereum RPC endpoints using `npm` and `jest`. The tests verify various Ethereum JSON-RPC methods to ensure they return valid and expected responses. 
+This project contains a set of tests to check the health of Passet Hub Ethereum RPC endpoints using `npm` and `jest`. The tests verify various Ethereum JSON-RPC methods to ensure they return valid and expected responses. 
 
 The health check is automated through GitHub Actions, running both weekly and manually when triggered.
+
+Endpoint: `https://testnet-passet-hub-eth-rpc.polkadot.io`
 
 ## Setup
 
