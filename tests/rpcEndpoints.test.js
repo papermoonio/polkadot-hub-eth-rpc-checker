@@ -324,13 +324,113 @@ describe("[Ethereum JSON-RPC API Tests] - Execution APIs", () => {
 });
 
 describe("[Ethereum JSON-RPC API Tests] - Debug APIs", () => {
-  test("debug_traceBlockByNumber should return execution trace for latest block", async () => {
+  test("debug_traceBlockByNumber should return execution trace for block", async () => {
+    const response = await makeRpcCall("debug_traceBlockByNumber", [
+      "0x42e08",
+      { tracer: "callTracer" },
+    ]);
+    expect(response).toHaveProperty("result");
+
+    if (response.result) {
+      // Result should be an array of transaction traces
+      expect(Array.isArray(response.result)).toBe(true);
+
+      // If there are transactions in the block, check the structure
+      if (response.result.length > 0) {
+        const firstTrace = response.result[0];
+        expect(firstTrace).toHaveProperty("txHash");
+        expect(firstTrace).toHaveProperty("result");
+        expect(firstTrace.txHash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+
+        // Check the trace result structure
+        const traceResult = firstTrace.result;
+        expect(traceResult).toHaveProperty("from");
+        expect(traceResult).toHaveProperty("gas");
+        expect(traceResult).toHaveProperty("gasUsed");
+        expect(traceResult).toHaveProperty("type");
+        expect(traceResult.type).toBe("CALL");
+
+        // Validate hex format for addresses and gas values
+        expect(traceResult.from).toMatch(/^0x[a-fA-F0-9]{40}$/);
+        expect(traceResult.gas).toMatch(/^0x[a-fA-F0-9]+$/);
+        expect(traceResult.gasUsed).toMatch(/^0x[a-fA-F0-9]+$/);
+      }
+    }
   });
 
-  test("debug_traceTransaction should return trace for a transaction (if tx exists)", async () => {
+  test("debug_traceTransaction should return trace for a transaction", async () => {
+    const response = await makeRpcCall("debug_traceTransaction", [
+      "0x4397c2482b7551cf0d059c783074d9661f06b4d17f50c1cc12225baf20332313",
+      { tracer: "callTracer" },
+    ]);
+    expect(response).toHaveProperty("result");
+
+    if (response.result) {
+      // Check the trace structure
+      expect(response.result).toHaveProperty("from");
+      expect(response.result).toHaveProperty("gas");
+      expect(response.result).toHaveProperty("gasUsed");
+      expect(response.result).toHaveProperty("type");
+      expect(response.result.type).toBe("CALL");
+
+      // Validate hex format
+      expect(response.result.from).toMatch(/^0x[a-fA-F0-9]{40}$/);
+      expect(response.result.gas).toMatch(/^0x[a-fA-F0-9]+$/);
+      expect(response.result.gasUsed).toMatch(/^0x[a-fA-F0-9]+$/);
+
+      // Check expected values from the curl example
+      expect(response.result.from).toBe(
+        "0x77a913e46c298ae3effde7a6562f53d234f37107"
+      );
+      expect(response.result.to).toBe(
+        "0xd116519c16d7e13912c9c7806aa2c5fc650f5060"
+      );
+      expect(response.result.input).toBe(
+        "0x6057361d000000000000000000000000000000000000000000000000000000000000000b"
+      );
+      expect(response.result.value).toBe("0x0");
+    }
   });
 
   test("debug_traceCall should return a trace result of a call", async () => {
+    const callParams = {
+      from: "0x77a913e46c298ae3effde7a6562f53d234f37107",
+      to: "0xd116519c16d7e13912c9c7806aa2c5fc650f5060",
+      data: "0x6057361d000000000000000000000000000000000000000000000000000000000000000b",
+    };
+
+    const response = await makeRpcCall("debug_traceCall", [
+      callParams,
+      "latest",
+      { tracer: "callTracer" },
+    ]);
+
+    expect(response).toHaveProperty("result");
+
+    if (response.result) {
+      // Check the call trace structure
+      expect(response.result).toHaveProperty("from");
+      expect(response.result).toHaveProperty("gas");
+      expect(response.result).toHaveProperty("gasUsed");
+      expect(response.result).toHaveProperty("type");
+      expect(response.result.type).toBe("CALL");
+
+      // Validate addresses and gas values
+      expect(response.result.from).toMatch(/^0x[a-fA-F0-9]{40}$/);
+      expect(response.result.gas).toMatch(/^0x[a-fA-F0-9]+$/);
+      expect(response.result.gasUsed).toMatch(/^0x[a-fA-F0-9]+$/);
+
+      // Check expected values from the curl example
+      expect(response.result.from).toBe(
+        "0x77a913e46c298ae3effde7a6562f53d234f37107"
+      );
+      expect(response.result.to).toBe(
+        "0xd116519c16d7e13912c9c7806aa2c5fc650f5060"
+      );
+      expect(response.result.input).toBe(
+        "0x6057361d000000000000000000000000000000000000000000000000000000000000000b"
+      );
+      expect(response.result.value).toBe("0x0");
+    }
   });
 });
-
